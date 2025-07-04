@@ -12,12 +12,20 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r .github/scripts/requirements.txt
+
       - name: Summarize paper
         run: |
           echo "Summarizing paper..."
-          # This is a placeholder for the summarization script
-          # It will be replaced with a script that parses the paper and creates the summaries
           python .github/scripts/summarize.py "${{ github.event.head_commit.added[0] }}"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
