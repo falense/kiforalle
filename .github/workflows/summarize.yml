@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - '_papers/**.pdf'
+  workflow_dispatch:
+    inputs:
+      paper_path:
+        description: 'Path to the paper PDF to summarize (e.g., _papers/2505.22954v1.pdf)'
+        required: true
+        type: string
 
 jobs:
   summarize:
@@ -23,7 +29,7 @@ jobs:
       - name: Summarize paper
         run: |
           echo "Summarizing paper..."
-          python .github/scripts/summarize.py "${{ github.event.head_commit.added[0] }}"
+          python .github/scripts/summarize.py "${{ github.event.inputs.paper_path || github.event.head_commit.added[0] }}"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
