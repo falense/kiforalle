@@ -1,18 +1,11 @@
 ---
 layout: page
-title: About
-permalink: /about/
+title: Om oss
+permalink: /om-oss/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Kiforalle.no er et initiativ for å gjøre forskning på kunstig intelligens tilgjengelig og forståelig for et bredt publikum i Norge. Vi tror at kunnskap er makt, og at alle bør ha muligheten til å forstå teknologien som former vår verden.
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Vi tilbyr oppsummeringer av ledende AI-forskning på tre nivåer, slik at du kan lære på den måten som passer deg best. Enten du er et barn som er nysgjerrig på roboter, en videregåendeelev som jobber med en skoleoppgave, eller en student som ønsker å gå i dybden, har vi noe for deg.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+Dette prosjektet er drevet av et ønske om å fremme nysgjerrighet og kritisk tenkning rundt kunstig intelligens. Vi håper du vil bli med oss på denne reisen!

@@ -1,0 +1,29 @@
+name: Summarize Paper
+
+on:
+  push:
+    paths:
+      - '_papers/**.pdf'
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Summarize paper
+        run: |
+          echo "Summarizing paper..."
+          # This is a placeholder for the summarization script
+          # It will be replaced with a script that parses the paper and creates the summaries
+          python .github/scripts/summarize.py "${{ github.event.head_commit.added[0] }}"
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add summaries for new paper"
+          title: "New paper summaries"
+          body: "This pull request contains the automatically generated summaries for a new paper."
+          branch: "new-paper-summaries"
