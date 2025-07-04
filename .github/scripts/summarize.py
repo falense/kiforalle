@@ -12,8 +12,7 @@ def create_summary(paper_path):
 
     # Configure Gemini API
     genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-    client = genai.Client()
-    model = "gemini-2.5-flash"
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     # Read PDF as bytes
     with open(paper_path, "rb") as f:
@@ -21,8 +20,7 @@ def create_summary(paper_path):
 
     # Generate advanced summary
     advanced_prompt = "Summarize this research paper for university/college level students, focusing on key concepts, methodologies, and findings:"
-    advanced_summary_response = client.models.generate_content(
-        model=model,
+    advanced_summary_response = model.generate_content(
         contents=[
             types.Part.from_bytes(data=doc_data, mime_type='application/pdf'),
             advanced_prompt
@@ -33,8 +31,7 @@ def create_summary(paper_path):
 
     # Reflection for advanced summary (for internal use/logging)
     advanced_reflection_prompt = f"Review the following advanced summary and the original paper content. Does the summary accurately reflect the key concepts, methodologies, and findings of the paper? Provide a brief critique.\n\nAdvanced Summary:\n{advanced_summary}"
-    advanced_reflection_response = client.models.generate_content(
-        model=model,
+    advanced_reflection_response = model.generate_content(
         contents=[
             types.Part.from_bytes(data=doc_data, mime_type='application/pdf'),
             advanced_reflection_prompt
@@ -45,8 +42,7 @@ def create_summary(paper_path):
 
     # Generate high school summary
     high_school_prompt = f"Based on the following advanced summary, create a summary suitable for high school students. Simplify complex terms and focus on the main ideas and implications:\n\nAdvanced Summary:\n{advanced_summary}"
-    high_school_summary_response = client.models.generate_content(
-        model=model,
+    high_school_summary_response = model.generate_content(
         contents=[
             types.Part.from_bytes(data=doc_data, mime_type='application/pdf'),
             high_school_prompt
@@ -57,8 +53,7 @@ def create_summary(paper_path):
 
     # Reflection for high school summary
     high_school_reflection_prompt = f"Review the following high school summary and the advanced summary. Is the high school summary clear, concise, and appropriate for the target audience, while still accurately conveying the main points?\n\nAdvanced Summary:\n{advanced_summary}\n\nHigh School Summary:\n{high_school_summary}"
-    high_school_reflection_response = client.models.generate_content(
-        model=model,
+    high_school_reflection_response = model.generate_content(
         contents=[
             types.Part.from_bytes(data=doc_data, mime_type='application/pdf'),
             high_school_reflection_prompt
@@ -69,8 +64,7 @@ def create_summary(paper_path):
 
     # Generate child summary
     child_prompt = f"Based on the following high school summary, create a very simple summary for children. Use simple language and analogies:\n\nHigh School Summary:\n{high_school_summary}"
-    child_summary_response = client.models.generate_content(
-        model=model,
+    child_summary_response = model.generate_content(
         contents=[
             types.Part.from_bytes(data=doc_data, mime_type='application/pdf'),
             child_prompt
@@ -81,8 +75,7 @@ def create_summary(paper_path):
 
     # Reflection for child summary
     child_reflection_prompt = f"Review the following child summary and the high school summary. Is the child summary easy to understand for a young audience and does it capture the essence of the paper in a simplified way?\n\nHigh School Summary:\n{high_school_summary}\n\nChild Summary:\n{child_summary}"
-    child_reflection_response = client.models.generate_content(
-        model=model,
+    child_reflection_response = model.generate_content(
         contents=[
             types.Part.from_bytes(data=doc_data, mime_type='application/pdf'),
             child_reflection_prompt
