@@ -1,0 +1,101 @@
+FUNCTION create_summary(paper_path):
+    // Extract the base name of the paper without the file extension.
+    paper_name = GET_FILENAME_WITHOUT_EXTENSION(paper_path)
+
+    // Get the current date in YYYY-MM-DD format.
+    current_date = GET_CURRENT_DATE("YYYY-MM-DD")
+
+    // Define the path for the new blog post file.
+    post_path = "_posts/" + current_date + "-" + paper_name + ".markdown"
+
+    // --- API Configuration ---
+    // Set up the generative AI model with an API key from environment variables.
+    CONFIGURE_AI_MODEL(API_KEY = GET_ENV_VARIABLE("GEMINI_API_KEY"))
+    model = INITIALIZE_GENERATIVE_MODEL("gemini-2.5-flash")
+
+    // --- File Reading ---
+    // Read the entire content of the PDF file into a byte array.
+    pdf_data = READ_FILE_BYTES(paper_path)
+
+    // --- Advanced Summary Generation ---
+    // Define the prompt for creating a university-level summary.
+    advanced_prompt = "Summarize this research paper for university/college level students, focusing on key concepts, methodologies, and findings:"
+    // Call the AI model to generate the summary using the PDF data and the prompt.
+    advanced_summary_response = model.GENERATE_CONTENT(pdf_data, advanced_prompt)
+    advanced_summary = advanced_summary_response.GET_TEXT()
+    PRINT "Advanced Summary Generated."
+
+    // --- Advanced Summary Reflection (for internal validation) ---
+    advanced_reflection_prompt = "Review the following advanced summary and the original paper content. Does the summary accurately reflect the key concepts, methodologies, and findings of the paper? Provide a brief critique. Advanced Summary: " + advanced_summary
+    advanced_reflection_response = model.GENERATE_CONTENT(pdf_data, advanced_reflection_prompt)
+    advanced_reflection = advanced_reflection_response.GET_TEXT()
+    PRINT "Advanced Summary Reflection: " + advanced_reflection
+
+    // --- High School Summary Generation ---
+    // Define the prompt to create a high school-level summary based on the advanced one.
+    high_school_prompt = "Based on the following advanced summary, create a summary suitable for high school students. Simplify complex terms and focus on the main ideas and implications: Advanced Summary: " + advanced_summary
+    // Call the AI model to generate the summary.
+    high_school_summary_response = model.GENERATE_CONTENT(pdf_data, high_school_prompt)
+    high_school_summary = high_school_summary_response.GET_TEXT()
+    PRINT "High School Summary Generated."
+
+    // --- High School Summary Reflection (for internal validation) ---
+    high_school_reflection_prompt = "Review the following high school summary and the advanced summary. Is the high school summary clear, concise, and appropriate for the target audience, while still accurately conveying the main points? Advanced Summary: " + advanced_summary + " High School Summary: " + high_school_summary
+    high_school_reflection_response = model.GENERATE_CONTENT(pdf_data, high_school_reflection_prompt)
+    high_school_reflection = high_school_reflection_response.GET_TEXT()
+    PRINT "High School Summary Reflection: " + high_school_reflection
+
+    // --- Child Summary Generation ---
+    // Define the prompt to create a simple summary for children based on the high school one.
+    child_prompt = "Based on the following high school summary, create a very simple summary for children. Use simple language and analogies: High School Summary: " + high_school_summary
+    // Call the AI model to generate the summary.
+    child_summary_response = model.GENERATE_CONTENT(pdf_data, child_prompt)
+    child_summary = child_summary_response.GET_TEXT()
+    PRINT "Child Summary Generated."
+
+    // --- Child Summary Reflection (for internal validation) ---
+    child_reflection_prompt = "Review the following child summary and the high school summary. Is the child summary easy to understand for a young audience and does it capture the essence of the paper in a simplified way? High School Summary: " + high_school_summary + " Child Summary: " + child_summary
+    child_reflection_response = model.GENERATE_CONTENT(pdf_data, child_reflection_prompt)
+    child_reflection = child_reflection_response.GET_TEXT()
+    PRINT "Child Summary Reflection: " + child_reflection
+
+    // --- Create Markdown Blog Post ---
+    // Open the post file for writing.
+    file_handle = OPEN_FILE_FOR_WRITING(post_path)
+
+    // Get the current timestamp for the post's front matter.
+    full_timestamp = GET_CURRENT_TIMESTAMP_WITH_TIMEZONE()
+
+    // Construct the content of the markdown file with YAML front matter and summaries.
+    file_content = """---
+layout: tabbed_post
+title:  "{paper_name}"
+date:   {full_timestamp}
+categories: ai forskning
+---
+
+## For Barn
+
+{child_summary}
+
+## For Videregåendeelever
+
+{high_school_summary}
+
+## For Universitets- og Høyskolenivå
+
+{advanced_summary}
+"""
+
+    // Write the content to the file.
+    WRITE_TO_FILE(file_handle, file_content)
+    // Close the file.
+    CLOSE_FILE(file_handle)
+
+// --- Main Execution Block ---
+// Check if the script is the main program being run.
+IF __name__ == "__main__":
+    // Get the first command-line argument, which should be the paper's path.
+    paper_path_arg = GET_COMMAND_LINE_ARGUMENT(1)
+    // Call the main function to process the paper.
+    create_summary(paper_path_arg)

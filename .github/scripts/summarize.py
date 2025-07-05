@@ -1,94 +1,59 @@
+
 import os
 import sys
-from datetime import datetime
+import datetime
+import pathlib
 import google.generativeai as genai
-from google.generativeai import types
-import httpx
 
 def create_summary(paper_path):
-    paper_name = os.path.splitext(os.path.basename(paper_path))[0]
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    post_path = f"_posts/{date_str}-{paper_name}.markdown"
+    """
+    Generates a blog post with summaries of a research paper for different audiences.
 
-    # Configure Gemini API
-    genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    Args:
+        paper_path (str): The path to the PDF file of the research paper.
+    """
+    paper_name = pathlib.Path(paper_path).stem
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    post_path = f"_posts/{current_date}-{paper_name}.markdown"
 
-    # Read PDF as bytes
-    with open(paper_path, "rb") as f:
-        doc_data = f.read()
+    # --- API Configuration ---
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY environment variable not set.")
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-1.5-flash")
 
-    # Generate advanced summary
+    # --- File Reading ---
+    print(f"Reading paper: {paper_path}")
+    pdf_file = genai.upload_file(path=paper_path)
+    print(f"Completed uploading file: {pdf_file.name}")
+
+
+    # --- Advanced Summary Generation ---
     advanced_prompt = "Summarize this research paper for university/college level students, focusing on key concepts, methodologies, and findings:"
-    advanced_summary_response = model.generate_content(
-        contents=[
-            genai.types.Blob(data=doc_data, mime_type='application/pdf'),
-            advanced_prompt
-        ]
-    )
+    advanced_summary_response = model.generate_content([advanced_prompt, pdf_file])
     advanced_summary = advanced_summary_response.text
     print("Advanced Summary Generated.")
 
-    # Reflection for advanced summary (for internal use/logging)
-    advanced_reflection_prompt = f"Review the following advanced summary and the original paper content. Does the summary accurately reflect the key concepts, methodologies, and findings of the paper? Provide a brief critique.\n\nAdvanced Summary:\n{advanced_summary}"
-    advanced_reflection_response = model.generate_content(
-        contents=[
-            genai.types.Blob(data=doc_data, mime_type='application/pdf'),
-            advanced_reflection_prompt
-        ]
-    )
-    advanced_reflection = advanced_reflection_response.text
-    print(f"Advanced Summary Reflection: {advanced_reflection}")
-
-    # Generate high school summary
-    high_school_prompt = f"Based on the following advanced summary, create a summary suitable for high school students. Simplify complex terms and focus on the main ideas and implications:\n\nAdvanced Summary:\n{advanced_summary}"
-    high_school_summary_response = model.generate_content(
-        contents=[
-            genai.types.Blob(data=doc_data, mime_type='application/pdf'),
-            high_school_prompt
-        ]
-    )
+    # --- High School Summary Generation ---
+    high_school_prompt = f"Based on the following advanced summary, create a summary suitable for high school students. Simplify complex terms and focus on the main ideas and implications: Advanced Summary: {advanced_summary}"
+    high_school_summary_response = model.generate_content([high_school_prompt, pdf_file])
     high_school_summary = high_school_summary_response.text
     print("High School Summary Generated.")
 
-    # Reflection for high school summary
-    high_school_reflection_prompt = f"Review the following high school summary and the advanced summary. Is the high school summary clear, concise, and appropriate for the target audience, while still accurately conveying the main points?\n\nAdvanced Summary:\n{advanced_summary}\n\nHigh School Summary:\n{high_school_summary}"
-    high_school_reflection_response = model.generate_content(
-        contents=[
-            genai.types.Blob(data=doc_data, mime_type='application/pdf'),
-            high_school_reflection_prompt
-        ]
-    )
-    high_school_reflection = high_school_reflection_response.text
-    print(f"High School Summary Reflection: {high_school_reflection}")
-
-    # Generate child summary
-    child_prompt = f"Based on the following high school summary, create a very simple summary for children. Use simple language and analogies:\n\nHigh School Summary:\n{high_school_summary}"
-    child_summary_response = model.generate_content(
-        contents=[
-            genai.types.Blob(data=doc_data, mime_type='application/pdf'),
-            child_prompt
-        ]
-    )
+    # --- Child Summary Generation ---
+    child_prompt = f"Based on the following high school summary, create a very simple summary for children. Use simple language and analogies: High School Summary: {high_school_summary}"
+    child_summary_response = model.generate_content([child_prompt, pdf_file])
     child_summary = child_summary_response.text
     print("Child Summary Generated.")
 
-    # Reflection for child summary
-    child_reflection_prompt = f"Review the following child summary and the high school summary. Is the child summary easy to understand for a young audience and does it capture the essence of the paper in a simplified way?\n\nHigh School Summary:\n{high_school_summary}\n\nChild Summary:\n{child_summary}"
-    child_reflection_response = model.generate_content(
-        contents=[
-            genai.types.Blob(data=doc_data, mime_type='application/pdf'),
-            child_reflection_prompt
-        ]
-    )
-    child_reflection = child_reflection_response.text
-    print(f"Child Summary Reflection: {child_reflection}")
+    # --- Create Markdown Blog Post ---
+    full_timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')
 
-    with open(post_path, "w") as f:
-        f.write(f"""---
+    file_content = f"""---
 layout: tabbed_post
 title:  "{paper_name}"
-date:   {datetime.now().strftime('%Y-%m-%d %H:%M:%S +0200')}
+date:   {full_timestamp}
 categories: ai forskning
 ---
 
@@ -103,8 +68,21 @@ categories: ai forskning
 ## For Universitets- og Høyskolenivå
 
 {advanced_summary}
-""")
+"""
+
+    with open(post_path, "w", encoding="utf-8") as f:
+        f.write(file_content)
+    print(f"Blog post created at: {post_path}")
+    
+    # --- Clean up the uploaded file ---
+    print(f"Deleting file: {pdf_file.name}")
+    genai.delete_file(pdf_file.name)
+    print("File deleted.")
+
 
 if __name__ == "__main__":
-    paper_path = sys.argv[1]
-    create_summary(paper_path)
+    if len(sys.argv) < 2:
+        print("Usage: python summarize.py <path_to_paper.pdf>")
+        sys.exit(1)
+    paper_path_arg = sys.argv[1]
+    create_summary(paper_path_arg)
