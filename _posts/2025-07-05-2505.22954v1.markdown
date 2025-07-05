@@ -1,0 +1,39 @@
+---
+layout: tabbed_post
+title:  "Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents"
+paper_id: "2505.22954v1"
+authors: "Jenny Zhang, Shengran Hu, Cong Lu, Robert Lange, Jeff Clune"
+date:   2025-07-05 22:30:45 +0000
+categories: ai forskning
+---
+
+## For Barn
+
+Tenk deg et dataprogram som lærer seg å skrive enda bedre dataprogrammer helt selv!  Det har forskere laget – det er som en supersmart valp som lærer seg nye triks helt alene!  Denne "Darwin Gödel-maskinen" er en slags kunstig intelligens (AI) som lærer ved å prøve og feile, akkurat som du lærer å sykle ved å prøve og falle til du klarer det! Den husker hva som funker og blir bedre for hver gang.
+
+I starten gjetta den bare riktig svar på programmeringsoppgaver omtrent 20% av tiden. Etter å ha lært og blitt bedre, ble den mye flinkere, og gjetta riktig over halvparten av tiden!
+
+Dette er viktig fordi det kan hjelpe oss å lage datamaskiner som kan lære og bli bedre uten at folk hele tiden må hjelpe dem. Men det er også viktig å være forsiktig! Forskere jobber hardt for å passe på at denne supersmarte AI-en er snill og grei.
+
+
+## For Videregåendeelever
+
+Forestill deg en kunstig intelligens (KI) som konstant kan forbedre sin egen kode, som et dataprogram som utvikler seg selv.  Det er ideen bak Darwin Gödel-maskinen (DGM), en ny type KI.  I motsetning til vanlige KI-er som er avhengige av forhåndsprogrammerte instruksjoner, lærer og forbedrer DGM seg selv gjennom en prosess som ligner biologisk evolusjon: prøving og feiling.
+
+DGM starter med et enkelt program som skriver kode.  Dette programmet prøver så å forbedre sin egen kode, og tester hver endring for å se om den fungerer bedre til å løse programmeringsoppgaver.  Hvis en forbedring er vellykket, lagres den.  DGM holder styr på alle disse forbedringene, og bygger videre på tidligere suksesser, litt som hvordan vitenskapelig fremskritt skjer over tid.  Dette systemet med konstant forbedring og videreutvikling gjør at DGM gradvis blir bedre og bedre til programmeringsoppgaver.
+
+Eksperimenter viste at DGM forbedret programmeringsevnen sin betydelig.  Den gikk fra å være rundt 20 % nøyaktig til over 50 % nøyaktig på en test, og fra rundt 14 % til over 30 % nøyaktig på en annen.  Disse forbedringene var ikke bare tilfeldigheter.  Eksperimenter der enten selvforbedringen eller "minnet" om tidligere suksesser ble fjernet, viste betydelig dårligere resultater, noe som beviser at begge deler er avgjørende for DGMs suksess.
+
+Denne forskningen er spennende fordi den antyder en vei mot å skape KI-er som kontinuerlig kan lære og tilpasse seg uten konstant menneskelig inngripen.  Det er imidlertid betydelige sikkerhetshensyn.  Fordi DGM kan modifisere seg selv, kjørte forskerne eksperimenter med innebygde sikkerhetstiltak, som å overvåke KI-en nøye og begrense dens kapasitet.  Mer forskning er nødvendig for å forstå og håndtere potensielle risikoer fullt ut før slike selvforbedrende KI-er blir tatt i bruk på bred basis.  DGM representerer et stort skritt fremover, men det er en lang vei å gå før disse kraftige systemene er trygge nok til bruk i den virkelige verden.
+
+
+## For Universitets- og Høyskolenivå
+
+Denne forskningsartikkelen introduserer Darwin Gödel-maskinen (DGM), et nytt selvlærende AI-system designet for autonom og kontinuerlig forbedring av sine kodeevner.  Hovedproblemstillingen er hvordan AI-systemer kan forbedre seg uendelig samtidig som de forbedrer problemløsningsevnen. Eksisterende tilnærminger, som meta-læring, er begrenset av sin avhengighet av forhåndsdefinerte søkerom og forbedringer av første orden.  I kontrast er DGM inspirert av både Gödel-maskinen (en teoretisk selvlærende AI) og biologisk evolusjon.
+
+DGM opererer iterativt, vekslende mellom selvmodifisering og empirisk validering. Den benytter frosne grunnmodeller (FGMer) som den underliggende motoren for kodegenerering og -utførelse. Systemet modifiserer iterativt sin egen kodebase – en prosess med «selvreferensiell selvforbedring» – og validerer deretter hver modifikasjon empirisk ved hjelp av kode-benchmark (SWE-bench og Polyglot).  I motsetning til den teoretiske Gödel-maskinen, som krever beviselig fordelaktige selvmodifikasjoner, bruker DGM empirisk validering, som etterligner prøving og feiling i biologisk evolusjon.  Avgjørende er at DGM opprettholder et arkiv over tidligere genererte kodeagenter, noe som muliggjør åpen-sluttet utforskning av søkerommet og gjenbruk av tidligere vellykkede modifikasjoner.  Denne arkiverings prosessen lar DGM bygge på tidligere innovasjoner, og speiler den kumulative naturen til vitenskapelig fremskritt.
+
+Empirisk demonstrerer DGM betydelige ytelsesforbedringer. På SWE-bench forbedret kodeevnene seg fra 20 % til 50 % nøyaktighet, og på Polyglot fra 14,2 % til 30,7 %. Disse forbedringene tilskrives både selvforbedringsmekanismen og den åpen-sluttede utforskningen muliggjort av agentarkivet. Kontrollforsøk, der enten selvforbedring eller åpen-sluttet utforskning ble utelatt, viste vesentlig lavere ytelsesgevinster, noe som understreker viktigheten av begge komponenter.  Videre viser forbedringene oppnådd av DGM overførbarhet på tvers av ulike store språkmodeller (LLMer), noe som tyder på generaliteten til de oppdagede forbedringene.
+
+Artikkelen tar også opp sikkerhetshensyn knyttet til selvlærende AI-systemer. Eksperimentene ble utført med sikkerhetsforanstaltninger som sandboxing og menneskelig tilsyn.  Forfatterne erkjenner potensielle risikoer som fremveksten av utilsiktede atferdsmønstre eller sårbarheter hvis selvforbedringsprosessen ikke overvåkes og styres nøye. De foreslår at fremtidig forskning bør fokusere på å integrere sikkerhetsmekanismer direkte i selvforbedringsløkken.  Samlet sett representerer DGM et betydelig skritt mot åpen-sluttet selvlærende AI, men ytterligere forskning er nødvendig for å fullt ut adressere sikkerhetsimplikasjonene av slike systemer.  Den åpen-sluttede naturen til DGM og dens evne til å akkumulere mangfoldige, gradvise forbedringer tilbyr en lovende tilnærming til det langsiktige målet om autonom AI-utvikling.
+
