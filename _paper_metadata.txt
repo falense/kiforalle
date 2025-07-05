@@ -1,0 +1,4 @@
+PAPER_TITLE=Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents
+PAPER_AUTHORS=Jenny Zhang, Shengran Hu, Cong Lu, Robert Lange, Jeff Clune
+PAPER_ID=2505.22954v1
+POST_PATH=_posts/2025-07-05-2505.22954v1.markdown
