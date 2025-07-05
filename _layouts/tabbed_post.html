@@ -12,72 +12,79 @@ layout: default
       <button class="tablinks" onclick="openTab(event, 'Universitet')">For Universitets- og Høyskolenivå</button>
     </div>
 
-    <div id="Barn" class="tabcontent"></div>
+    """    <div id="Barn" class="tabcontent"></div>
     <div id="Videregaende" class="tabcontent"></div>
     <div id="Universitet" class="tabcontent"></div>
 
-    {{ content }}
+    <div id="hidden-content" style="display:none;">
+      {{ content }}
+    </div>
   </div>
 
 </article>
 
 <style>
   .tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
   }
 
   .tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    color: #333;
     cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
+    font-size: 16px;
+    outline: none;
+    padding: 14px 20px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .tab button:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+
+  .tab button:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
 
   .tab button:hover {
-    background-color: #ddd;
+    background-color: #e0e0e0;
   }
 
   .tab button.active {
-    background-color: #ccc;
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
   }
 
   .tabcontent {
     display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
   }
 </style>
 
 <script>
-function openTab(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
   }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
 
-document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("defaultOpen").click();
-    const content = document.querySelector('.post-content');
-    const barnContent = content.querySelector('h2#for-barn').nextElementSibling;
-    const videregaendeContent = content.querySelector('h2#for-videregåendeelever').nextElementSibling;
-    const universitetContent = content.querySelector('h2#for-universitets--og-høyskolenivå').nextElementSibling;
-
-    document.getElementById('Barn').appendChild(barnContent);
-    document.getElementById('Videregaende').appendChild(videregaendeContent);
-    document.getElementById('Universitet').appendChild(universitetContent);
-});
-</script>
+    const content = document.getElementById('hidden-content');
+</script>""
