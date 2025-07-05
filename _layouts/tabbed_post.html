@@ -12,7 +12,7 @@ layout: default
       <button class="tablinks" onclick="openTab(event, 'Universitet')">For Universitets- og Høyskolenivå</button>
     </div>
 
-    """    <div id="Barn" class="tabcontent"></div>
+    <div id="Barn" class="tabcontent"></div>
     <div id="Videregaende" class="tabcontent"></div>
     <div id="Universitet" class="tabcontent"></div>
 
@@ -86,5 +86,28 @@ layout: default
 
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("defaultOpen").click();
+    
     const content = document.getElementById('hidden-content');
-</script>""
+    const contentText = content.innerHTML;
+    
+    const sections = contentText.split(/## (For Barn|For Videregåendeelever|For Universitets- og Høyskolenivå)/);
+    
+    for (let i = 1; i < sections.length; i += 2) {
+      const sectionName = sections[i];
+      const sectionContent = sections[i + 1];
+      
+      let tabId;
+      if (sectionName === 'For Barn') {
+        tabId = 'Barn';
+      } else if (sectionName === 'For Videregåendeelever') {
+        tabId = 'Videregaende';
+      } else if (sectionName === 'For Universitets- og Høyskolenivå') {
+        tabId = 'Universitet';
+      }
+      
+      if (tabId) {
+        document.getElementById(tabId).innerHTML = sectionContent;
+      }
+    }
+  });
+</script>
