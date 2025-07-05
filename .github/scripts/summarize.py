@@ -59,22 +59,128 @@ def create_summary(paper_path):
         print("No authors extracted, leaving blank")
 
     # --- Advanced Summary Generation ---
-    advanced_prompt = "Summarize this research paper for university/college level students, focusing on key concepts, methodologies, and findings:"
+    advanced_prompt = """
+    You are a research paper summarizer. Create a comprehensive summary of this research paper for university/college level students.
+    
+    Requirements:
+    - Focus on key concepts, methodologies, and findings
+    - Include the research question, methodology, main results, and implications
+    - Use academic language appropriate for university students
+    - Be thorough but concise (aim for 300-500 words)
+    - Write in English initially
+    
+    Summarize this research paper:
+    """
     advanced_summary_response = model.generate_content([advanced_prompt, pdf_file])
     advanced_summary = advanced_summary_response.text
     print("Advanced Summary Generated.")
 
     # --- High School Summary Generation ---
-    high_school_prompt = f"Based on the following advanced summary, create a summary suitable for high school students. Simplify complex terms and focus on the main ideas and implications: Advanced Summary: {advanced_summary}"
+    high_school_prompt = f"""
+    You are a research paper summarizer. Based on the following advanced summary, create a summary suitable for high school students.
+    
+    Requirements:
+    - Simplify complex terms and concepts
+    - Focus on the main ideas and their real-world implications
+    - Use language appropriate for 16-18 year olds
+    - Make it engaging and relatable
+    - Be concise (aim for 200-300 words)
+    - Write in English initially
+    
+    Advanced Summary: {advanced_summary}
+    
+    Create a high school level summary:
+    """
     high_school_summary_response = model.generate_content([high_school_prompt, pdf_file])
     high_school_summary = high_school_summary_response.text
     print("High School Summary Generated.")
 
     # --- Child Summary Generation ---
-    child_prompt = f"Based on the following high school summary, create a very simple summary for children. Use simple language and analogies: High School Summary: {high_school_summary}"
+    child_prompt = f"""
+    You are a research paper summarizer. Based on the following high school summary, create a very simple summary for children (ages 8-12).
+    
+    Requirements:
+    - Use very simple language and short sentences
+    - Include analogies and examples children can understand
+    - Focus on why this research matters in everyday life
+    - Make it fun and engaging
+    - Be brief (aim for 100-150 words)
+    - Write in English initially
+    
+    High School Summary: {high_school_summary}
+    
+    Create a child-friendly summary:
+    """
     child_summary_response = model.generate_content([child_prompt, pdf_file])
     child_summary = child_summary_response.text
     print("Child Summary Generated.")
+
+    # --- Translation to Norwegian ---
+    print("Translating summaries to Norwegian...")
+    
+    # Translate Advanced Summary
+    advanced_translation_prompt = f"""
+    Translate the following academic summary to Norwegian. Maintain the academic tone and technical accuracy.
+    Use Norwegian academic terminology where appropriate.
+    
+    Text to translate: {advanced_summary}
+    """
+    advanced_norwegian_response = model.generate_content([advanced_translation_prompt])
+    advanced_summary_no = advanced_norwegian_response.text
+    print("Advanced summary translated to Norwegian.")
+
+    # Translate High School Summary
+    high_school_translation_prompt = f"""
+    Translate the following high school level summary to Norwegian. Maintain the appropriate language level for Norwegian teenagers.
+    Use Norwegian terminology that high school students would understand.
+    
+    Text to translate: {high_school_summary}
+    """
+    high_school_norwegian_response = model.generate_content([high_school_translation_prompt])
+    high_school_summary_no = high_school_norwegian_response.text
+    print("High school summary translated to Norwegian.")
+
+    # Translate Child Summary
+    child_translation_prompt = f"""
+    Translate the following child-friendly summary to Norwegian. Use simple Norwegian that Norwegian children would understand.
+    Keep the fun and engaging tone. Use Norwegian words and expressions that are familiar to Norwegian children.
+    
+    Text to translate: {child_summary}
+    """
+    child_norwegian_response = model.generate_content([child_translation_prompt])
+    child_summary_no = child_norwegian_response.text
+    print("Child summary translated to Norwegian.")
+
+    # --- Reflection and Quality Check ---
+    print("Performing quality reflection on Norwegian summaries...")
+    
+    reflection_prompt = f"""
+    You are a quality reviewer for Norwegian academic summaries. Review the following three Norwegian summaries of the same research paper and assess:
+
+    1. Do they accurately reflect the content and findings of the original paper?
+    2. Are they appropriate for their target audiences (university, high school, children)?
+    3. Is the Norwegian language natural and correct?
+    4. Are there any important details missing or misrepresented?
+    5. Do they maintain consistency in key facts across all three levels?
+
+    Original Paper Context: [You have access to the full paper]
+    
+    Advanced Summary (Norwegian): {advanced_summary_no}
+    
+    High School Summary (Norwegian): {high_school_summary_no}
+    
+    Child Summary (Norwegian): {child_summary_no}
+    
+    Provide a brief assessment and any recommended improvements. If the summaries are satisfactory, simply state "Summaries are accurate and appropriate for their target audiences."
+    """
+    reflection_response = model.generate_content([reflection_prompt, pdf_file])
+    reflection_result = reflection_response.text
+    print(f"Quality reflection completed: {reflection_result}")
+
+    # Use Norwegian summaries for the final output
+    advanced_summary = advanced_summary_no
+    high_school_summary = high_school_summary_no
+    child_summary = child_summary_no
 
     # --- Create Markdown Blog Post ---
     full_timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')
