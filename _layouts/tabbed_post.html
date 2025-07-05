@@ -88,9 +88,10 @@ layout: default
     document.getElementById("defaultOpen").click();
     
     const content = document.getElementById('hidden-content');
-    const contentText = content.innerHTML;
+    const contentHTML = content.innerHTML;
     
-    const sections = contentText.split(/## (For Barn|For Videregåendeelever|For Universitets- og Høyskolenivå)/);
+    // Split by h2 tags since Jekyll converts markdown headers to HTML
+    const sections = contentHTML.split(/<h2[^>]*>(For Barn|For Videregåendeelever|For Universitets- og Høyskolenivå)<\/h2>/);
     
     for (let i = 1; i < sections.length; i += 2) {
       const sectionName = sections[i];
@@ -105,8 +106,8 @@ layout: default
         tabId = 'Universitet';
       }
       
-      if (tabId) {
-        document.getElementById(tabId).innerHTML = sectionContent;
+      if (tabId && sectionContent) {
+        document.getElementById(tabId).innerHTML = sectionContent.trim();
       }
     }
   });

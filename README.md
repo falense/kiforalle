@@ -45,15 +45,29 @@ En nettside som oppsummerer utvalgt AI-forskning på tre nivåer: for barn, for 
 ## Utvikling
 
 ### Lokalt miljø
+
+#### Forutsetninger
+- Ruby (versjon 2.7 eller nyere)
+- Bundler gem
+
+#### Installasjon og kjøring
 ```bash
 # Installer avhengigheter
 bundle install
 
 # Kjør Jekyll lokalt
-bundle exec jekyll serve
+bundle exec jekyll serve --host 0.0.0.0 --port 4000
 
 # Nettstedet er tilgjengelig på http://localhost:4000
 ```
+
+#### Tilgang til artikler
+- Besøk `http://localhost:4000/ai/forskning/2025/07/05/2505.22954v1.html` for å se eksempelartikkel
+- Fane-funksjonaliteten lar deg bytte mellom de tre nivåene av oppsummeringer
+
+#### Debugging
+- Hvis fanene ikke viser innhold, sjekk at JavaScript kjører i nettleseren
+- Kontroller at Jekyll har bygget siden riktig ved å se i `_site`-mappen
 
 ### Miljøvariabler
 - `GEMINI_API_KEY`: Google Gemini API-nøkkel for oppsummering
