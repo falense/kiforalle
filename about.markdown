@@ -50,7 +50,7 @@ Kiforalle.no er bygget med:
 - **Jekyll** for statisk nettside
 - **Google Gemini API** for AI-assistert oppsummering
 - **GitHub Actions** for automatisering
-- **Åpen kildekode** på [GitHub](https://github.com/kiforalle)
+- **Åpen kildekode** på [GitHub](https://github.com/falense/kiforalle)
 
 ## Kom i gang!
 

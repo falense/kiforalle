@@ -24,7 +24,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   AI-forskning gjort forståelig for alle. Oppsummeringer av banebrytende AI-forskning på tre nivåer: for barn, videregåendeelever og universitets-/høyskolenivå.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://kiforalle.no" # the base hostname & protocol for your site, e.g. http://example.com
-github_username:  kiforalle
+github_username:  falense
 
 # Additional SEO and metadata
 author: Kiforalle Team
@@ -36,7 +36,7 @@ locale: "no_NO"
 social:
   name: Kiforalle.no
   links:
-    - https://github.com/kiforalle
+    - https://github.com/falense/kiforalle
 
 # Collections
 collections:

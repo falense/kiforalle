@@ -10,6 +10,15 @@ Her finner du oppsummeringer av banebrytende AI-forskning, tilpasset tre ulike n
 
 ## 🎯 Slik fungerer det
 
+1. **📄 PDF-opplasting** til `_papers/` mappen trigger GitHub Actions
+2. **🤖 Google Gemini API** ekstraherer metadata og genererer tre forskjellige oppsummeringer på engelsk
+3. **🇳🇴 Automatisk oversettelse** til norsk med språknivå-tilpasning for hver målgruppe
+4. **✅ Kvalitetskontroll** gjennom automatisk refleksjon og validering av AI-generert innhold
+5. **📝 Pull request** opprettes automatisk for menneskelig gjennomgang og godkjenning
+6. **📱 Jekyll-publisering** av responsiv Markdown med interaktiv fane-layout etter merge
+
+## 👥 Hvem er dette for?
+
 <div class="level-explanation">
   <div class="level-card">
     <h3>🧒 For barn (8-12 år)</h3>
