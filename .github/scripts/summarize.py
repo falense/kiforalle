@@ -28,6 +28,35 @@ def create_summary(paper_path):
     pdf_file = genai.upload_file(path=paper_path)
     print(f"Completed uploading file: {pdf_file.name}")
 
+    # --- Extract Paper Title ---
+    title_prompt = "Extract the title of this research paper. Return only the title, nothing else:"
+    title_response = model.generate_content([title_prompt, pdf_file])
+    paper_title = title_response.text.strip()
+    print(f"Extracted paper title: {paper_title}")
+    
+    # Fallback to filename if title extraction fails or is too short
+    if not paper_title or len(paper_title) < 5:
+        paper_title = paper_name
+        print(f"Using filename as title: {paper_title}")
+
+    # --- Extract Authors ---
+    authors_prompt = "Extract the authors of this research paper. Return only the authors' names separated by commas, nothing else:"
+    authors_response = model.generate_content([authors_prompt, pdf_file])
+    paper_authors = authors_response.text.strip()
+    print(f"Extracted authors: {paper_authors}")
+    
+    # Clean up authors string and validate
+    if paper_authors and len(paper_authors) > 2:
+        # Remove any extra text that might be included
+        paper_authors = paper_authors.replace("Authors:", "").replace("By:", "").strip()
+        # Ensure it doesn't look like an error message
+        if "unable" in paper_authors.lower() or "cannot" in paper_authors.lower() or "error" in paper_authors.lower():
+            paper_authors = ""
+    else:
+        paper_authors = ""
+    
+    if not paper_authors:
+        print("No authors extracted, leaving blank")
 
     # --- Advanced Summary Generation ---
     advanced_prompt = "Summarize this research paper for university/college level students, focusing on key concepts, methodologies, and findings:"
@@ -52,7 +81,9 @@ def create_summary(paper_path):
 
     file_content = f"""---
 layout: tabbed_post
-title:  "{paper_name}"
+title:  "{paper_title}"
+paper_id: "{paper_name}"
+authors: "{paper_authors}"
 date:   {full_timestamp}
 categories: ai forskning
 ---

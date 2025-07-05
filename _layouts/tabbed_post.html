@@ -3,7 +3,24 @@ layout: default
 ---
 
 <article class="post">
-  <h1>{{ page.title }}</h1>
+  <header class="post-header">
+    <div class="paper-metadata">
+      <span class="paper-id">{{ page.paper_id | default: page.title }}</span>
+      <span class="paper-date">{{ page.date | date: "%B %d, %Y" }}</span>
+      <div class="paper-categories">
+        {% for category in page.categories %}
+          <span class="category">{{ category }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    <h1 class="paper-title">{{ page.title }}</h1>
+    {% if page.authors and page.authors != "" %}
+      <div class="paper-authors">
+        <span class="authors-label">Authors:</span>
+        <span class="authors-list">{{ page.authors }}</span>
+      </div>
+    {% endif %}
+  </header>
 
   <div class="post-content">
     <div class="tab">
@@ -24,6 +41,72 @@ layout: default
 </article>
 
 <style>
+  .post-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+  }
+
+  .paper-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .paper-id {
+    font-family: monospace;
+    background-color: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+
+  .paper-date {
+    font-style: italic;
+  }
+
+  .paper-categories {
+    display: flex;
+    gap: 8px;
+  }
+
+  .category {
+    background-color: #e8f4f8;
+    color: #2c5aa0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .paper-title {
+    font-size: 1.8em;
+    margin: 0;
+    color: #333;
+    line-height: 1.3;
+  }
+
+  .paper-authors {
+    margin-top: 10px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  .authors-label {
+    font-weight: bold;
+    margin-right: 8px;
+    color: #333;
+  }
+
+  .authors-list {
+    font-style: italic;
+  }
+
   .tab {
     display: flex;
     justify-content: center;
@@ -66,6 +149,41 @@ layout: default
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
+    line-height: 1.6;
+  }
+
+  .tabcontent h3 {
+    color: #2c5aa0;
+    margin-top: 25px;
+    margin-bottom: 15px;
+  }
+
+  .tabcontent ul {
+    padding-left: 20px;
+  }
+
+  .tabcontent li {
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .paper-metadata {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .tab {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .tab button {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 8px !important;
+      margin-bottom: 5px;
+    }
   }
 </style>
 
