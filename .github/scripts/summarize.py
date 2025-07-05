@@ -70,6 +70,7 @@ categories: ai forskning
 {advanced_summary}
 """
 
+    os.makedirs(os.path.dirname(post_path), exist_ok=True)
     with open(post_path, "w", encoding="utf-8") as f:
         f.write(file_content)
     print(f"Blog post created at: {post_path}")
