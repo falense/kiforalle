@@ -21,10 +21,38 @@
 title: Kiforalle.no
 email:
 description: >- # this means to ignore newlines until "baseurl:"
-  En nettside som oppsummerer utvalgt AI-forskning på tre nivåer: for barn, for videregåendeelever og for universitets-/høyskolenivå.
+  AI-forskning gjort forståelig for alle. Oppsummeringer av banebrytende AI-forskning på tre nivåer: for barn, videregåendeelever og universitets-/høyskolenivå.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://kiforalle.no" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  kiforalle
+
+# Additional SEO and metadata
+author: Kiforalle Team
+twitter_username: kiforalle
+lang: "no"
+locale: "no_NO"
+
+# Social sharing
+social:
+  name: Kiforalle.no
+  links:
+    - https://github.com/kiforalle
+
+# Collections
+collections:
+  papers:
+    output: false
+
+# Pagination
+paginate: 6
+paginate_path: "/side/:num/"
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
 
 # Build settings
 theme: minima

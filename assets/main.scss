@@ -1,0 +1,161 @@
+---
+---
+
+@import "minima";
+
+// Custom styles for Kiforalle.no
+.level-explanation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.level-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  h3 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  p {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.post-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  h3 {
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+    
+    a {
+      color: #2c3e50;
+      text-decoration: none;
+      
+      &:hover {
+        color: #3498db;
+      }
+    }
+  }
+  
+  .post-meta {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .post-authors {
+    color: #495057;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-bottom: 0;
+  }
+}
+
+.cta-section {
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.cta-button {
+  display: inline-block;
+  background: #3498db;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: #2980b9;
+    color: white;
+  }
+}
+
+// Responsive improvements
+@media (max-width: 768px) {
+  .level-explanation {
+    grid-template-columns: 1fr;
+  }
+  
+  .posts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .level-card,
+  .post-card {
+    padding: 1rem;
+  }
+}
+
+// Improve the main content area
+.page-content {
+  padding-top: 2rem;
+}
+
+// Style the home page specifically
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+  }
+  
+  > p:first-of-type {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #495057;
+    margin-bottom: 2rem;
+  }
+  
+  h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    margin-top: 3rem;
+  }
+}
+
+// Hide the default posts section since we're using custom grid
+.home .post-list-heading,
+.home .post-list,
+.home .rss-subscribe {
+  display: none;
+}
