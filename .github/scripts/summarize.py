@@ -362,6 +362,26 @@ categories: ai forskning
         
     print(f"=== Summarization process completed successfully! ===")
     print(f"Final output: {post_path}")
+    
+    # --- Output metadata for GitHub Actions ---
+    print(f"=== Outputting metadata for GitHub Actions ===")
+    print(f"PAPER_TITLE={paper_title}")
+    print(f"PAPER_AUTHORS={paper_authors}")
+    print(f"PAPER_ID={paper_name}")
+    print(f"POST_PATH={post_path}")
+    
+    # Write metadata to a file that GitHub Actions can read
+    metadata_file = "_paper_metadata.txt"
+    try:
+        with open(metadata_file, "w", encoding="utf-8") as f:
+            f.write(f"PAPER_TITLE={paper_title}\n")
+            f.write(f"PAPER_AUTHORS={paper_authors}\n")
+            f.write(f"PAPER_ID={paper_name}\n")
+            f.write(f"POST_PATH={post_path}\n")
+        print(f"Metadata written to: {metadata_file}")
+    except Exception as e:
+        print(f"ERROR: Failed to write metadata file: {e}")
+        # Don't raise here as the main task is complete
 
 
 if __name__ == "__main__":
