@@ -1,4 +1,4 @@
-PAPER_TITLE=Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents
-PAPER_AUTHORS=Jenny Zhang, Shengran Hu, Cong Lu, Robert Lange, Jeff Clune
-PAPER_ID=2505.22954v1
-POST_PATH=_posts/2025-07-05-2505.22954v1.markdown
+PAPER_TITLE=DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning
+PAPER_AUTHORS=Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang, Runxin Xu, Qihao Zhu, Hui Li, Jianzhong Guo, Jiashi Li, Jingchang Chen, Jingyang Yuan, Jinhao Tu, Junjie Qiu, Junlong Li, Shirong Ma, J.L. Cai, Peyi Wang, Xiao Bi, Xiaokang Zhang, Kai Dong, Jin Chen, Kai Hu, Xingkai Yu, Yu Wu, Z.F. Wu, Zhibin Gou, Zhihong Shao, Zhuoshu Li, Ziyi Gao
+PAPER_ID=2501.12948v1
+POST_PATH=_posts/2025-07-06-2501.12948v1.markdown
