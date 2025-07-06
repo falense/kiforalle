@@ -3,7 +3,154 @@ import os
 import sys
 import datetime
 import pathlib
+import base64
+import re
+import fitz  # PyMuPDF
+from PIL import Image
+import io
 import google.generativeai as genai
+
+def extract_figures_from_pdf(pdf_path):
+    """
+    Extract all figures/images from a PDF file.
+    
+    Args:
+        pdf_path (str): Path to the PDF file
+        
+    Returns:
+        list: List of dictionaries containing figure data and metadata
+    """
+    print(f"=== Extracting figures from PDF ===")
+    figures = []
+    
+    try:
+        # Open PDF document
+        doc = fitz.open(pdf_path)
+        print(f"Opened PDF with {len(doc)} pages")
+        
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+            image_list = page.get_images()
+            
+            print(f"Page {page_num + 1}: Found {len(image_list)} images")
+            
+            for img_index, img in enumerate(image_list):
+                # Get image data
+                xref = img[0]
+                pix = fitz.Pixmap(doc, xref)
+                
+                # Skip if image is too small (likely not a figure)
+                if pix.width < 100 or pix.height < 100:
+                    pix = None
+                    continue
+                
+                # Convert to PIL Image
+                if pix.n - pix.alpha < 4:  # GRAY or RGB
+                    img_data = pix.tobytes("png")
+                    pil_image = Image.open(io.BytesIO(img_data))
+                    
+                    # Create figure metadata
+                    figure_info = {
+                        'page': page_num + 1,
+                        'index': img_index,
+                        'width': pix.width,
+                        'height': pix.height,
+                        'image_data': img_data,
+                        'pil_image': pil_image,
+                        'id': f"fig_{page_num + 1}_{img_index}"
+                    }
+                    
+                    figures.append(figure_info)
+                    print(f"  Extracted figure {figure_info['id']}: {pix.width}x{pix.height}")
+                
+                pix = None
+                
+        doc.close()
+        print(f"Total figures extracted: {len(figures)}")
+        return figures
+        
+    except Exception as e:
+        print(f"ERROR: Failed to extract figures: {e}")
+        return []
+
+def select_figure_for_summary(model, uploaded_figures, summary_text, audience_level):
+    """
+    Select the most appropriate figure for a given summary and audience level.
+    
+    Args:
+        model: Gemini model instance
+        uploaded_figures: List of uploaded figures with metadata
+        summary_text: The summary text to match against
+        audience_level: Target audience ('child', 'high_school', 'university')
+        
+    Returns:
+        dict: Selected figure info or None if no appropriate figure found
+    """
+    if not uploaded_figures:
+        print(f"No figures available for {audience_level} level selection")
+        return None
+    
+    print(f"=== Selecting figure for {audience_level} level ===")
+    
+    # Create selection prompt
+    selection_prompt = f"""
+    You are analyzing figures from a research paper to select the most appropriate one for a specific audience level.
+    
+    Target Audience: {audience_level}
+    Summary Text: {summary_text}
+    
+    I will show you several figures from the paper. Please:
+    1. Analyze each figure for its relevance to the summary content
+    2. Consider the complexity level appropriate for the target audience:
+       - Child: Simple, visual, easy to understand diagrams or photos
+       - High School: Moderately complex charts, clear illustrations
+       - University: Complex graphs, technical diagrams, detailed visualizations
+    3. Select the MOST appropriate figure, or respond with "NONE" if no figure is suitable
+    
+    Respond with only the figure number (e.g., "Figure 1") or "NONE".
+    """
+    
+    try:
+        # Prepare content for the model
+        content = [selection_prompt]
+        
+        # Add each figure with a label
+        for i, fig_info in enumerate(uploaded_figures):
+            content.append(f"Figure {i+1}:")
+            content.append(fig_info['gemini_file'])
+        
+        # Get model response
+        response = model.generate_content(content)
+        selection_result = response.text.strip()
+        
+        print(f"Model selection result: {selection_result}")
+        
+        # Parse the response
+        if selection_result.upper() == "NONE":
+            print(f"No appropriate figure selected for {audience_level} level")
+            return None
+        
+        # Extract figure number
+        if "Figure" in selection_result or "figure" in selection_result:
+            try:
+                # Extract number from response like "Figure 1" or "figure 2"
+                import re
+                match = re.search(r'[Ff]igure (\d+)', selection_result)
+                if match:
+                    fig_num = int(match.group(1)) - 1  # Convert to 0-based index
+                    if 0 <= fig_num < len(uploaded_figures):
+                        selected_fig = uploaded_figures[fig_num]
+                        print(f"Selected figure {fig_num + 1} for {audience_level} level")
+                        return selected_fig
+            except (ValueError, IndexError):
+                pass
+        
+        print(f"Could not parse figure selection result: {selection_result}")
+        return None
+        
+    except Exception as e:
+        print(f"ERROR: Failed to select figure for {audience_level} level: {e}")
+        return None
 
 def create_summary(paper_path):
     """
@@ -46,6 +193,31 @@ def create_summary(paper_path):
     except Exception as e:
         print(f"ERROR: Failed to upload file: {e}")
         raise
+
+    # --- Extract Figures from PDF ---
+    print(f"=== Extracting figures from PDF ===")
+    figures = extract_figures_from_pdf(paper_path)
+    
+    # Upload figures to Gemini for analysis
+    uploaded_figures = []
+    for figure in figures:
+        try:
+            # Save figure temporarily
+            temp_fig_path = f"temp_{figure['id']}.png"
+            figure['pil_image'].save(temp_fig_path)
+            
+            # Upload to Gemini
+            uploaded_fig = genai.upload_file(path=temp_fig_path)
+            uploaded_figures.append({
+                'gemini_file': uploaded_fig,
+                'metadata': figure,
+                'temp_path': temp_fig_path
+            })
+            print(f"Uploaded figure {figure['id']} to Gemini")
+            
+        except Exception as e:
+            print(f"ERROR: Failed to upload figure {figure['id']}: {e}")
+            continue
 
     # --- Extract Paper Title ---
     print(f"=== Extracting paper title ===")
@@ -300,10 +472,77 @@ def create_summary(paper_path):
     child_summary = child_summary_no
     print("Successfully switched to Norwegian summaries for final output.")
 
+    # --- Select Figures for Each Summary Level ---
+    print(f"=== Selecting figures for each summary level ===")
+    
+    # Select figure for university level
+    selected_university_fig = select_figure_for_summary(
+        model, uploaded_figures, advanced_summary, "university"
+    )
+    
+    # Select figure for high school level
+    selected_high_school_fig = select_figure_for_summary(
+        model, uploaded_figures, high_school_summary, "high_school"
+    )
+    
+    # Select figure for child level
+    selected_child_fig = select_figure_for_summary(
+        model, uploaded_figures, child_summary, "child"
+    )
+    
+    # Save selected figures to assets directory
+    selected_figures = {}
+    paper_assets_dir = f"assets/papers/{paper_name}"
+    
+    if selected_university_fig or selected_high_school_fig or selected_child_fig:
+        print(f"Creating assets directory: {paper_assets_dir}")
+        try:
+            os.makedirs(paper_assets_dir, exist_ok=True)
+            
+            # Save university figure
+            if selected_university_fig:
+                university_fig_path = f"{paper_assets_dir}/university_fig.png"
+                selected_university_fig['metadata']['pil_image'].save(university_fig_path)
+                selected_figures['university'] = f"/assets/papers/{paper_name}/university_fig.png"
+                print(f"Saved university figure to: {university_fig_path}")
+            
+            # Save high school figure
+            if selected_high_school_fig:
+                high_school_fig_path = f"{paper_assets_dir}/high_school_fig.png"
+                selected_high_school_fig['metadata']['pil_image'].save(high_school_fig_path)
+                selected_figures['high_school'] = f"/assets/papers/{paper_name}/high_school_fig.png"
+                print(f"Saved high school figure to: {high_school_fig_path}")
+            
+            # Save child figure
+            if selected_child_fig:
+                child_fig_path = f"{paper_assets_dir}/child_fig.png"
+                selected_child_fig['metadata']['pil_image'].save(child_fig_path)
+                selected_figures['child'] = f"/assets/papers/{paper_name}/child_fig.png"
+                print(f"Saved child figure to: {child_fig_path}")
+                
+        except Exception as e:
+            print(f"ERROR: Failed to save figures: {e}")
+            selected_figures = {}
+    
+    print(f"Selected figures: {selected_figures}")
+
     # --- Create Markdown Blog Post ---
     print(f"=== Creating Markdown Blog Post ===")
     full_timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')
     print(f"Full timestamp: {full_timestamp}")
+
+    # Build figure sections
+    child_figure_section = ""
+    if 'child' in selected_figures:
+        child_figure_section = f'\n\n![Figure for barn]({selected_figures["child"]})\n'
+    
+    high_school_figure_section = ""
+    if 'high_school' in selected_figures:
+        high_school_figure_section = f'\n\n![Figure for videregående]({selected_figures["high_school"]})\n'
+    
+    university_figure_section = ""
+    if 'university' in selected_figures:
+        university_figure_section = f'\n\n![Figure for universitets- og høyskolenivå]({selected_figures["university"]})\n'
 
     file_content = f"""---
 layout: tabbed_post
@@ -316,15 +555,15 @@ categories: ai forskning
 
 ## For Barn
 
-{child_summary}
+{child_summary}{child_figure_section}
 
 ## For Videregåendeelever
 
-{high_school_summary}
+{high_school_summary}{high_school_figure_section}
 
 ## For Universitets- og Høyskolenivå
 
-{advanced_summary}
+{advanced_summary}{university_figure_section}
 """
 
     print(f"Blog post content prepared ({len(file_content)} characters)")
@@ -350,15 +589,30 @@ categories: ai forskning
         print(f"ERROR: Failed to create blog post: {e}")
         raise
     
-    # --- Clean up the uploaded file ---
-    print(f"=== Cleaning up uploaded file ===")
+    # --- Clean up uploaded files ---
+    print(f"=== Cleaning up uploaded files ===")
     try:
-        print(f"Deleting file: {pdf_file.name}")
+        print(f"Deleting PDF file: {pdf_file.name}")
         genai.delete_file(pdf_file.name)
-        print("File deleted successfully.")
+        print("PDF file deleted successfully.")
     except Exception as e:
-        print(f"ERROR: Failed to delete uploaded file: {e}")
+        print(f"ERROR: Failed to delete uploaded PDF file: {e}")
         # Don't raise here as the main task is complete
+    
+    # Clean up uploaded figures
+    for fig_info in uploaded_figures:
+        try:
+            print(f"Deleting figure: {fig_info['gemini_file'].name}")
+            genai.delete_file(fig_info['gemini_file'].name)
+            
+            # Remove temporary file
+            if os.path.exists(fig_info['temp_path']):
+                os.remove(fig_info['temp_path'])
+                print(f"Removed temporary file: {fig_info['temp_path']}")
+                
+        except Exception as e:
+            print(f"ERROR: Failed to delete figure {fig_info['gemini_file'].name}: {e}")
+            # Don't raise here as the main task is complete
         
     print(f"=== Summarization process completed successfully! ===")
     print(f"Final output: {post_path}")
