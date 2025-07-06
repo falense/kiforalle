@@ -3,7 +3,7 @@ layout: tabbed_post
 title:  "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning"
 paper_id: "2501.12948v1"
 authors: "Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang, Runxin Xu, Qihao Zhu, Hui Li, Jianzhong Guo, Jiashi Li, Jingchang Chen, Jingyang Yuan, Jinhao Tu, Junjie Qiu, Junlong Li, Shirong Ma, J.L. Cai, Peyi Wang, Xiao Bi, Xiaokang Zhang, Kai Dong, Jin Chen, Kai Hu, Xingkai Yu, Yu Wu, Z.F. Wu, Zhibin Gou, Zhihong Shao, Zhuoshu Li, Ziyi Gao"
-date:   2025-07-06 20:08:52 +0000
+date:   2025-01-22 20:08:52 +0000
 categories: ai forskning
 ---
 

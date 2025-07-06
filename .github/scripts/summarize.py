@@ -163,12 +163,7 @@ def create_summary(paper_path):
     print(f"Paper path: {paper_path}")
     
     paper_name = pathlib.Path(paper_path).stem
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-    post_path = f"_posts/{current_date}-{paper_name}.markdown"
-    
     print(f"Paper name: {paper_name}")
-    print(f"Current date: {current_date}")
-    print(f"Output post path: {post_path}")
 
     # --- API Configuration ---
     print(f"=== Configuring Gemini API ===")
@@ -275,6 +270,89 @@ def create_summary(paper_path):
         print("Final result: No authors extracted, leaving blank")
     else:
         print(f"Final authors: {paper_authors}")
+
+    # --- Extract Paper Date ---
+    print(f"=== Extracting paper date ===")
+    date_prompt = """Extract the publication date or submission date from this arXiv paper. 
+    Look for dates in formats like:
+    - "Submitted on 15 Mar 2024"
+    - "v1 [cs.AI] 15 Mar 2024"
+    - Any date mentioned in the paper header or metadata
+    
+    Return only the date in YYYY-MM-DD format, nothing else. If no date is found, return "NOT_FOUND"."""
+    print(f"Date extraction prompt: {date_prompt}")
+    
+    try:
+        date_response = model.generate_content([date_prompt, pdf_file])
+        extracted_date = date_response.text.strip()
+        print(f"Raw date response: '{date_response.text}'")
+        print(f"Cleaned date: '{extracted_date}'")
+        
+        # Validate and parse the extracted date
+        paper_date = None
+        if extracted_date and extracted_date.upper() != "NOT_FOUND":
+            try:
+                # Try to parse the date to validate it
+                parsed_date = datetime.datetime.strptime(extracted_date, "%Y-%m-%d")
+                paper_date = extracted_date
+                print(f"Successfully parsed paper date: {paper_date}")
+            except ValueError:
+                print(f"Could not parse extracted date '{extracted_date}', trying alternative parsing...")
+                # Try to extract date from various formats
+                date_patterns = [
+                    r'(\d{4})-(\d{2})-(\d{2})',  # YYYY-MM-DD
+                    r'(\d{1,2})\s+(\w{3})\s+(\d{4})',  # DD MMM YYYY
+                    r'(\w{3})\s+(\d{1,2}),?\s+(\d{4})',  # MMM DD, YYYY
+                ]
+                
+                for pattern in date_patterns:
+                    match = re.search(pattern, extracted_date)
+                    if match:
+                        try:
+                            if pattern == date_patterns[0]:  # YYYY-MM-DD
+                                paper_date = f"{match.group(1)}-{match.group(2)}-{match.group(3)}"
+                            elif pattern == date_patterns[1]:  # DD MMM YYYY
+                                month_map = {
+                                    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                                    'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                                    'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+                                }
+                                day = match.group(1).zfill(2)
+                                month = month_map.get(match.group(2), '01')
+                                year = match.group(3)
+                                paper_date = f"{year}-{month}-{day}"
+                            elif pattern == date_patterns[2]:  # MMM DD, YYYY
+                                month_map = {
+                                    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                                    'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                                    'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+                                }
+                                month = month_map.get(match.group(1), '01')
+                                day = match.group(2).zfill(2)
+                                year = match.group(3)
+                                paper_date = f"{year}-{month}-{day}"
+                            
+                            # Validate the constructed date
+                            datetime.datetime.strptime(paper_date, "%Y-%m-%d")
+                            print(f"Successfully parsed alternative date format: {paper_date}")
+                            break
+                        except (ValueError, KeyError):
+                            continue
+        
+        if not paper_date:
+            print("Could not extract or parse paper date, using current date as fallback")
+            paper_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        print(f"Final paper date: {paper_date}")
+        
+    except Exception as e:
+        print(f"ERROR: Failed to extract paper date: {e}")
+        paper_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        print(f"Using current date as fallback: {paper_date}")
+
+    # --- Set up post path using extracted date ---
+    post_path = f"_posts/{paper_date}-{paper_name}.markdown"
+    print(f"Output post path: {post_path}")
 
     # --- Advanced Summary Generation ---
     print(f"=== Generating Advanced Summary ===")
@@ -528,8 +606,12 @@ def create_summary(paper_path):
 
     # --- Create Markdown Blog Post ---
     print(f"=== Creating Markdown Blog Post ===")
-    full_timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')
-    print(f"Full timestamp: {full_timestamp}")
+    # Use extracted paper date with a default time
+    paper_datetime = datetime.datetime.strptime(paper_date, "%Y-%m-%d")
+    # Set time to 12:00 PM UTC for consistency
+    paper_datetime = paper_datetime.replace(hour=12, minute=0, second=0, tzinfo=datetime.timezone.utc)
+    full_timestamp = paper_datetime.strftime('%Y-%m-%d %H:%M:%S %z')
+    print(f"Paper date timestamp: {full_timestamp}")
 
     # Build figure sections
     child_figure_section = ""
