@@ -6,54 +6,32 @@ permalink: /om-oss/
 
 ## Vår misjon
 
-Kiforalle.no er et initiativ for å gjøre forskning på kunstig intelligens tilgjengelig og forståelig for et bredt publikum i Norge. Vi tror at kunnskap er makt, og at alle bør ha muligheten til å forstå teknologien som former vår verden.
+Kiforalle.no er et initiativ for å gjøre KI-forskning tilgjengelig og forståelig for alle nordmenn. Vi tror at alle fortjener å forstå teknologien som former vår verden, uansett alder eller bakgrunn.
+
+Vi oversetter spennende KI-forskning til norsk og forklarer det på tre forskjellige nivåer – fra 8-åringer til forskere. Målet vårt er å bygge bro mellom avansert forskning og hverdagsforståelse.
 
 ## Hvorfor tre nivåer?
 
-Vi tilbyr oppsummeringer av ledende AI-forskning på tre nivåer, slik at du kan lære på den måten som passer deg best:
+Vi tilbyr oppsummeringer på tre nivåer fordi læring skjer best når innholdet er tilpasset din bakgrunn:
 
-### 🧒 For barn (8-12 år)
-- Enkle forklaringer med analogier og eksempler fra hverdagen
-- Fokus på grunnleggende konsepter og "hvorfor er dette kult?"
-- Språk som er lett å forstå og engasjerende
+**🧒 For barn (8-12 år)**  
+Enkle forklaringer med analogier fra hverdagen. Vi fokuserer på grunnleggende konsepter og "hvorfor er dette spennende?" med språk som er lett å forstå.
 
-### 🎓 For videregåendeelever (16-18 år)
-- Mer dyptgående forklaringer med teknisk kontekst
-- Kobler forskning til relevant kunnskap fra skolen
-- Hjelper med å forstå praktiske anvendelser
+**🎓 For ungdom (16-18 år)**  
+Dyptgående forklaringer med teknisk kontekst. Vi kobler forskning til relevant kunnskap fra skolen og hjelper med å forstå praktiske anvendelser.
 
-### 🏛️ For universitets-/høyskolenivå
-- Fullstendige akademiske oppsummeringer med detaljer
-- Inkluderer metodikk, resultater og implikasjoner
-- Egnet for studenter, forskere og fagfolk
-
-## Hvordan fungerer det?
-
-Vår automatiserte prosess:
-
-1. **📄 Nye forskningsartikler** legges til som PDF-filer
-2. **🤖 AI-assistert analyse** med Google Gemini API
-3. **🇳🇴 Oversettelse til høykvalitets norsk** på alle nivåer
-4. **✅ Kvalitetskontroll** og validering av innhold
-5. **📱 Publisering** med interaktiv fane-layout
-
-## Våre verdier
-
-- **Tilgjengelighet**: Alle skal kunne forstå AI-forskning
-- **Kvalitet**: Nøyaktige og pålitelige oppsummeringer
-- **Åpenhet**: Åpen kildekode og transparent prosess
-- **Læring**: Fremme nysgjerrighet og kritisk tenkning
+**🏛️ For voksne (universitets-/høyskolenivå)**  
+Fullstendige akademiske oppsummeringer med detaljer om metodikk, resultater og implikasjoner. Egnet for studenter, forskere og fagfolk.
 
 ## Teknisk informasjon
 
-Kiforalle.no er bygget med:
-- **Jekyll** for statisk nettside
-- **Google Gemini API** for AI-assistert oppsummering
-- **GitHub Actions** for automatisering
-- **Åpen kildekode** på [GitHub](https://github.com/falense/kiforalle)
+Kiforalle.no er bygget med moderne teknologi for å sikre kvalitet og tilgjengelighet:
 
-## Kom i gang!
+- **Jekyll** for statisk nettside som laster raskt
+- **Google Gemini API** for KI-assistert oppsummering på alle nivåer
+- **GitHub Actions** for automatisering av publiseringsprosessen
+- **Åpen kildekode** på [GitHub](https://github.com/falense/kiforalle) for full transparens
 
-Enten du er et barn som er nysgjerrig på roboter, en videregåendeelev som jobber med en skoleoppgave, eller en student som ønsker å gå i dybden, har vi noe for deg.
+Prosessen vår kombinerer KI-teknologi med menneskelig kvalitetskontroll for å sikre at alle oppsummeringer er nøyaktige og pålitelige.
 
-Start med å utforske våre [nyeste artikler](/) og finn det nivået som passer deg best!
+*Utforsk våre [nyeste artikler](/) og finn det nivået som passer deg best!*
